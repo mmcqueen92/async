@@ -1,44 +1,20 @@
-const request = require('request');
-
-const input = process.argv.slice(2)[0];
-
-const fetchBreedDescription = (breed) =>  {
-  request(`http://api.thecatapi.com/v1/breeds/search?q=${breed}`, (error, response, body) =>  {
-  if (error)  {
-    console.log('error: ', error);
-  } else if (!error)  {
-    const data = JSON.parse(body);
-    if (data[0])  {
-      console.log(data[0].description);
-    } else if (!data[0])  {
-      console.log('Error :( breed not found');
-    }
-  }
-});
-}
-
-const fetchBreedDescription2 = (breedName, callback) => {
-  request(`http://api.thecatapi.com/v1/breeds/search?q=${breedName}`, (error, response, body) =>  {
-    if (error)  {
+const fetchBreedDescription = (breed, callback) => {
+  const request = require('request');
+  request(`http://api.thecatapi.com/v1/breeds/search?q=${breed}`, (error, response, body) => {
+    if (error) {
       callback(error);
-    } else if (!error)  {
-      const data = JSON.parse(body);
-      if (data[0])  {
-        console.log(data[0].description);
-      } else if (!data[0])  {
-        console.log('Error :( breed not found');
+    } else {
+      const data = JSON.parse(body)[0];
+      if (data) {
+        callback(error, data.description);
+      } else {
+        callback('Breed not found', null);
       }
     }
   });
 }
 
-
-
-
-fetchBreedDescription(input)
-
-fetchBreedDescription2()
-
+module.exports = fetchBreedDescription;
 
 //fetchBreedDescription('Siberian', (error, description) => {
 
